@@ -42,12 +42,12 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>$(SolutionDir)..\..\</OutDir>
+    <OutDir>$(SolutionDir)\bin\$(Configuration)\</OutDir>
     <IntDir>output\main\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>$(SolutionDir)..\..\</OutDir>
+    <OutDir>$(SolutionDir)\bin\$(Configuration)\</OutDir>
     <IntDir>output\main\$(Configuration)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -64,10 +64,14 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir);$(SolutionDir)..\..\</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir);$(SolutionDir)\lib\$(Configuration)\</AdditionalLibraryDirectories>
       <ModuleDefinitionFile>skynet.def</ModuleDefinitionFile>
       <AdditionalDependencies>ws2_32.lib;pthreadVCE2.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <ImportLibrary>$(SolutionDir)\lib\$(Configuration)\$(TargetName).lib</ImportLibrary>
     </Link>
+    <PreBuildEvent>
+      <Command>if not exist $(SolutionDir)\bin\$(Configuration)\pthreadVCE2.dll copy $(SolutionDir)\pthreadVCE2.dll $(SolutionDir)\bin\$(Configuration)\pthreadVCE2.dll</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -87,10 +91,14 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>$(SolutionDir);$(SolutionDir)..\..\</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir);$(SolutionDir)\lib\$(Configuration)\</AdditionalLibraryDirectories>
       <ModuleDefinitionFile>skynet.def</ModuleDefinitionFile>
       <AdditionalDependencies>ws2_32.lib;pthreadVCE2.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <ImportLibrary>$(SolutionDir)\lib\$(Configuration)\$(TargetName).lib</ImportLibrary>
     </Link>
+    <PreBuildEvent>
+      <Command>if not exist $(SolutionDir)\bin\$(Configuration)\pthreadVCE2.dll copy $(SolutionDir)\pthreadVCE2.dll $(SolutionDir)\bin\$(Configuration)\pthreadVCE2.dll</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\skynet-src\malloc_hook.c" />
