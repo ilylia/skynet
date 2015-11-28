@@ -138,12 +138,7 @@ _ctrl(struct gate * g, const void * msg, int sz) {
 		return;
 	}
 	if (memcmp(command,"start",i) == 0) {
-		_parm(tmp, sz, i);
-		int uid = strtol(command , NULL, 10);
-		int id = hashid_lookup(&g->hash, uid);
-		if (id>=0) {
-			skynet_socket_start(ctx, uid);
-		}
+		skynet_socket_start(ctx, g->listen_id);
 		return;
 	}
 	if (memcmp(command, "close", i) == 0) {
@@ -236,7 +231,10 @@ dispatch_socket_message(struct gate *g, const struct skynet_socket_message * mes
 			break;
 		}
 		int id = hashid_lookup(&g->hash, message->id);
-		if (id<0) {
+		if (id>=0) {
+			struct connection *c = &g->conn[id];
+			_report(g, "%d open %d %s:0",message->id,message->id,c->remote_name);
+		} else {
 			skynet_error(ctx, "Close unknown connection %d", message->id);
 			skynet_socket_close(ctx, message->id);
 		}
@@ -267,8 +265,7 @@ dispatch_socket_message(struct gate *g, const struct skynet_socket_message * mes
 			c->id = message->ud;
 			memcpy(c->remote_name, message+1, sz);
 			c->remote_name[sz] = '\0';
-			_report(g, "%d open %d %s:0",c->id, c->id, c->remote_name);
-			skynet_error(ctx, "socket open: %x", c->id);
+			skynet_socket_start(ctx, message->ud);
 		}
 		break;
 	case SKYNET_SOCKET_TYPE_WARNING:
@@ -336,7 +333,6 @@ start_listen(struct gate *g, char * listen_addr) {
 	if (g->listen_id < 0) {
 		return 1;
 	}
-	skynet_socket_start(ctx, g->listen_id);
 	return 0;
 }
 
@@ -345,6 +341,7 @@ gate_init(struct gate *g , struct skynet_context * ctx, char * parm) {
 	if (parm == NULL)
 		return 1;
 	int max = 0;
+	int buffer = 0;
 	int sz = strlen(parm)+1;
 #ifdef _MSC_VER
 	assert(sz <= 1024);
@@ -356,7 +353,7 @@ gate_init(struct gate *g , struct skynet_context * ctx, char * parm) {
 #endif
 	int client_tag = 0;
 	char header;
-	int n = sscanf(parm, "%c %s %s %d %d", &header, watchdog, binding, &client_tag, &max);
+	int n = sscanf(parm, "%c %s %s %d %d %d",&header,watchdog, binding,&client_tag , &max,&buffer);
 	if (n<4) {
 		skynet_error(ctx, "Invalid gate parm %s",parm);
 		return 1;
