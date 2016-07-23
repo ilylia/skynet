@@ -1,6 +1,8 @@
 local skynet = require "skynet"
 local sharedata = require "sharedata.corelib"
 local table = table
+local cache = require "skynet.codecache"
+cache.mode "OFF"	-- turn off codecache, because CMD.new may load data file
 
 local NORET = {}
 local pool = {}
@@ -36,16 +38,24 @@ local CMD = {}
 
 local env_mt = { __index = _ENV }
 
-function CMD.new(name, t)
+function CMD.new(name, t, ...)
 	local dt = type(t)
 	local value
 	if dt == "table" then
 		value = t
 	elseif dt == "string" then
 		value = setmetatable({}, env_mt)
-		local f = load(t, "=" .. name, "t", value)
-		assert(skynet.pcall(f))
+		local f
+		if t:sub(1,1) == "@" then
+			f = assert(loadfile(t:sub(2),"bt",value))
+		else
+			f = assert(load(t, "=" .. name, "bt", value))
+		end
+		local _, ret = assert(skynet.pcall(f, ...))
 		setmetatable(value, nil)
+		if type(ret) == "table" then
+			value = ret
+		end
 	elseif dt == "nil" then
 		value = {}
 	else
@@ -80,7 +90,7 @@ function CMD.confirm(cobj)
 	return NORET
 end
 
-function CMD.update(name, t)
+function CMD.update(name, t, ...)
 	local v = pool[name]
 	local watch, oldcobj
 	if v then
@@ -91,7 +101,7 @@ function CMD.update(name, t)
 		pool[name] = nil
 		pool_count[name] = nil
 	end
-	CMD.new(name, t)
+	CMD.new(name, t, ...)
 	local newobj = pool[name].obj
 	if watch then
 		sharedata.host.markdirty(oldcobj)

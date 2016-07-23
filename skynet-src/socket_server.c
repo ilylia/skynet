@@ -46,6 +46,13 @@
 
 #define MAX_UDP_PACKAGE 65535
 
+// EAGAIN and EWOULDBLOCK may be not the same value.
+#if (EAGAIN != EWOULDBLOCK)
+#define AGAIN_WOULDBLOCK EAGAIN : case EWOULDBLOCK
+#else
+#define AGAIN_WOULDBLOCK EAGAIN
+#endif
+
 struct write_buffer {
 	struct write_buffer * next;
 	void *buffer;
@@ -119,6 +126,7 @@ struct request_setudp {
 
 struct request_close {
 	int id;
+	int shutdown;
 	uintptr_t opaque;
 };
 
@@ -338,7 +346,9 @@ force_close(struct socket_server *ss, struct socket *s, struct socket_message *r
 		sp_del(ss->event_fd, s->fd);
 	}
 	if (s->type != SOCKET_TYPE_BIND) {
-		close(s->fd);
+		if (close(s->fd) < 0) {
+			perror("close socket:");
+		}
 	}
 	s->type = SOCKET_TYPE_INVALID;
 }
@@ -479,7 +489,7 @@ send_list_tcp(struct socket_server *ss, struct socket *s, struct wb_list *list, 
 				switch(errno) {
 				case EINTR:
 					continue;
-				case EAGAIN:
+				case AGAIN_WOULDBLOCK:
 					return -1;
 				}
 				force_close(ss,s, result);
@@ -535,7 +545,7 @@ send_list_udp(struct socket_server *ss, struct socket *s, struct wb_list *list, 
 		if (err < 0) {
 			switch(errno) {
 			case EINTR:
-			case EAGAIN:
+			case AGAIN_WOULDBLOCK:
 				return -1;
 			}
 			fprintf(stderr, "socket-server : udp (%d) sendto error %s.\n",s->id, strerror(errno));
@@ -709,7 +719,7 @@ send_socket(struct socket_server *ss, struct request_send * request, struct sock
 			if (n<0) {
 				switch(errno) {
 				case EINTR:
-				case EAGAIN:
+				case AGAIN_WOULDBLOCK:
 					n = 0;
 					break;
 				default:
@@ -794,7 +804,7 @@ close_socket(struct socket_server *ss, struct request_close *request, struct soc
 		if (type != -1)
 			return type;
 	}
-	if (send_buffer_empty(s)) {
+	if (request->shutdown || send_buffer_empty(s)) {
 		force_close(ss,s,result);
 		result->id = id;
 		result->opaque = request->opaque;
@@ -836,7 +846,7 @@ start_socket(struct socket_server *ss, struct request_start *request, struct soc
 	}
 	if (s->type == SOCKET_TYPE_PACCEPT || s->type == SOCKET_TYPE_PLISTEN) {
 		if (sp_add(ss->event_fd, s->fd, s)) {
-			s->type = SOCKET_TYPE_INVALID;
+			force_close(ss, s, result);
 			result->data = strerror(errno);
 			return SOCKET_ERROR;
 		}
@@ -845,10 +855,12 @@ start_socket(struct socket_server *ss, struct request_start *request, struct soc
 		result->data = "start";
 		return SOCKET_OPEN;
 	} else if (s->type == SOCKET_TYPE_CONNECTED) {
+		// todo: maybe we should send a message SOCKET_TRANSFER to s->opaque
 		s->opaque = request->opaque;
 		result->data = "transfer";
 		return SOCKET_OPEN;
 	}
+	// if s->type == SOCKET_TYPE_HALFCLOSE , SOCKET_CLOSE message will send later
 	return -1;
 }
 
@@ -1001,7 +1013,7 @@ forward_message_tcp(struct socket_server *ss, struct socket *s, struct socket_me
 		switch(errno) {
 		case EINTR:
 			break;
-		case EAGAIN:
+		case AGAIN_WOULDBLOCK:
 			fprintf(stderr, "socket-server: EAGAIN capture.\n");
 			break;
 		default:
@@ -1063,7 +1075,7 @@ forward_message_udp(struct socket_server *ss, struct socket *s, struct socket_me
 	if (n<0) {
 		switch(errno) {
 		case EINTR:
-		case EAGAIN:
+		case AGAIN_WOULDBLOCK:
 			break;
 		default:
 			// close when error
@@ -1102,7 +1114,10 @@ report_connect(struct socket_server *ss, struct socket *s, struct socket_message
 	int code = getsockopt(s->fd, SOL_SOCKET, SO_ERROR, &error, &len);  
 	if (code < 0 || error) {  
 		force_close(ss,s, result);
-		result->data = strerror(errno);
+		if (code >= 0)
+			result->data = strerror(error);
+		else
+			result->data = strerror(errno);
 		return SOCKET_ERROR;
 	} else {
 		s->type = SOCKET_TYPE_CONNECTED;
@@ -1259,7 +1274,7 @@ socket_server_poll(struct socket_server *ss, struct socket_message * result, int
 					--ss->event_index;
 				}
 				if (type == -1)
-					break;
+					break;				
 				return type;
 			}
 			if (e->write) {
@@ -1370,6 +1385,17 @@ void
 socket_server_close(struct socket_server *ss, uintptr_t opaque, int id) {
 	struct request_package request;
 	request.u.close.id = id;
+	request.u.close.shutdown = 0;
+	request.u.close.opaque = opaque;
+	send_request(ss, &request, 'K', sizeof(request.u.close));
+}
+
+
+void
+socket_server_shutdown(struct socket_server *ss, uintptr_t opaque, int id) {
+	struct request_package request;
+	request.u.close.id = id;
+	request.u.close.shutdown = 1;
 	request.u.close.opaque = opaque;
 	send_request(ss, &request, 'K', sizeof(request.u.close));
 }

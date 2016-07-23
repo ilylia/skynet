@@ -1,29 +1,36 @@
-## å‰è¨€
+## Skynet
+
+Skynet is a lightweight online game framework, and it can be used in many other fields.
+
+## Ç°ÑÔ
+#### ±¾²Ö¿âskynetÖ§³ÖwindowsÏÂÔËĞĞ£¬Ö»Ö§³Övisual studio 2013£¬ÇëÈ·ÈÏÄãµÄ±àÒëÆ÷ÒÑ¾­´òºÃSP4²¹¶¡
+#### ÒòÎªºÜÖØÒª£¬ËùÒÔÇ¿µ÷Ò»±é£¬Çë¸øÄãµÄvs2013´òÉÏSP4²¹¶¡£¬·ñÔò»á±àÒë³ö´í¡£
+
 ```
-æ­¤ç‰ˆæœ¬ä¿®æ”¹è‡ªå®˜æ–¹ç‰ˆskynetï¼Œæ”¹åŠ¨éƒ¨åˆ†å¦‚ä¸‹ï¼š
-1ã€sprotoä¿®æ”¹ï¼Œæ·»åŠ äº†realï¼ˆåŒç²¾åº¦æµ®ç‚¹æ•°doubleï¼‰çš„æ”¯æŒï¼Œä»¥åŠvariantç±»å‹ï¼ˆå¯ä»¥æ˜¯real/int/string/boolï¼‰çš„æ”¯æŒ
-2ã€windowsä¸‹ä¸æ”¯æŒepollï¼Œæ•…é‡‡ç”¨event-selectç½‘ç»œæ¨¡å‹æ¨¡æ‹Ÿepollæ¥ä¿è¯æœ€å°æ”¹åŠ¨skynetæºç çš„æƒ…å†µä¸‹ï¼Œå®ç°ç½‘ç»œé€šè®¯
-3ã€windowså¹³å°ä¸‹æ²¡æœ‰pipeå…¼å®¹çš„æ¥å£ï¼Œé‡‡ç”¨äº†socket apiæ¥æ¨¡æ‹Ÿè¿™ä¸€æœºåˆ¶
-4ã€æ§åˆ¶å°è¾“å…¥ï¼Œhackä¿®æ”¹äº†readå‡½æ•°æ¥æ¨¡æ‹Ÿè¯»å–fd 0(stdin)
+´Ë°æ±¾ĞŞ¸Ä×Ô¹Ù·½°æskynet£¬¸Ä¶¯²¿·ÖÈçÏÂ£º
+1¡¢sprotoĞŞ¸Ä£¬Ìí¼ÓÁËreal£¨Ë«¾«¶È¸¡µãÊıdouble£©µÄÖ§³Ö£¬ÒÔ¼°variantÀàĞÍ£¨¿ÉÒÔÊÇreal/int/string/bool£©µÄÖ§³Ö
+2¡¢windowsÏÂ²»Ö§³Öepoll£¬¹Ê²ÉÓÃevent-selectÍøÂçÄ£ĞÍÄ£ÄâepollÀ´±£Ö¤×îĞ¡¸Ä¶¯skynetÔ´ÂëµÄÇé¿öÏÂ£¬ÊµÏÖÍøÂçÍ¨Ñ¶
+3¡¢windowsÆ½Ì¨ÏÂÃ»ÓĞpipe¼æÈİµÄ½Ó¿Ú£¬²ÉÓÃÁËsocket apiÀ´Ä£ÄâÕâÒ»»úÖÆ
+4¡¢¿ØÖÆÌ¨ÊäÈë£¬hackĞŞ¸ÄÁËreadº¯ÊıÀ´Ä£Äâ¶ÁÈ¡fd 0(stdin)
 ```
 
-## ç¼–è¯‘
+## ±àÒë
 ```
-windowsï¼š
-ä½¿ç”¨visual studio 2013ç›´æ¥æ‰“å¼€build/vs2013/skynet.slnå³å¯ï¼Œç›®å‰æš‚æ—¶åªæ”¯æŒè¿™ä¸€ä¸ªç‰ˆæœ¬çš„ç¼–è¯‘å™¨
+windows£º
+Ê¹ÓÃvisual studio 2013Ö±½Ó´ò¿ªbuild/vs2013/skynet.sln¼´¿É£¬Ä¿Ç°ÔİÊ±Ö»Ö§³ÖÕâÒ»¸ö°æ±¾µÄ±àÒëÆ÷
 
-linux/macosï¼š
-å®˜æ–¹ç‰ˆä¸€æ ·
+linux/macos£º
+¹Ù·½°æÒ»Ñù
 ```
 
-## è¿è¡Œ
+## ÔËĞĞ
 ```
-windowsï¼š
-1ã€å·¥ä½œç›®å½•è®¾ç½®ä¸ºskynet.exeæ‰€åœ¨ç›®å½•ï¼Œé»˜è®¤ä¸º $(ProjectDir)..\..\
-2ã€å‘½ä»¤å‚æ•°è®¾ç½®ä¸ºconfigæ–‡ä»¶çš„ç›¸å¯¹è·¯å¾„ï¼Œå¦‚ examples/config
+windows£º
+1¡¢¹¤×÷Ä¿Â¼ÉèÖÃÎªskynet.exeËùÔÚÄ¿Â¼£¬Ä¬ÈÏÎª $(ProjectDir)..\..\
+2¡¢ÃüÁî²ÎÊıÉèÖÃÎªconfigÎÄ¼şµÄÏà¶ÔÂ·¾¶£¬Èç examples/config
 
-linux/macosï¼š
-å’Œå®˜æ–¹ç‰ˆä¸€æ ·
+linux/macos£º
+ºÍ¹Ù·½°æÒ»Ñù
 ```
 
 ## Build
@@ -39,7 +46,7 @@ You can use vs ide to debugging skynet
 4.hack read fd(0) for console input
 ```
 
-For linux, install autoconf first for jemalloc
+For linux, install autoconf first for jemalloc:
 
 ```
 git clone https://github.com/cloudwu/skynet.git
@@ -47,33 +54,31 @@ cd skynet
 make 'PLATFORM'  # PLATFORM can be linux, macosx, freebsd now
 ```
 
-Or you can :
+Or you can:
 
 ```
 export PLAT=linux
 make
 ```
 
-For freeBSD , use gmake instead of make .
+For FreeBSD , use gmake instead of make.
 
 ## Test
 
-Run these in different console
+Run these in different consoles:
 
 ```
 ./skynet examples/config	# Launch first skynet node  (Gate server) and a skynet-master (see config for standalone option)
 ./3rd/lua/lua examples/client.lua 	# Launch a client, and try to input hello.
 ```
 
-## About Lua
+## About Lua version
 
-Skynet now use a modify version of lua 5.3.1 (http://www.lua.org/ftp/lua-5.3.1.tar.gz) .
+Skynet now uses a modified version of lua 5.3.3 ( https://github.com/ejoy/lua/tree/skynet ) for multiple lua states.
 
-For detail : http://lua-users.org/lists/lua-l/2014-03/msg00489.html
+You can also use official Lua versions, just edit the Makefile by yourself.
 
-You can also use the other official Lua version , edit the makefile by yourself .
+## How To Use (Sorry, Only in Chinese now)
 
-## How To (in Chinese)
-
-* Read Wiki https://github.com/cloudwu/skynet/wiki
+* Read Wiki for documents https://github.com/cloudwu/skynet/wiki
 * The FAQ in wiki https://github.com/cloudwu/skynet/wiki/FAQ
