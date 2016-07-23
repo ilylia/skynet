@@ -13,6 +13,7 @@
 build/vs2013/output
 build/vs2013/My Amplifier XE Results*
 build/vs2015/output
+build/vs2015/skynet.VC.db
 *.opensdf
 *.opendb
 *.sdf
