@@ -12,7 +12,9 @@
 *.user
 build/vs2013/output
 build/vs2013/My Amplifier XE Results*
+build/vs2015/output
 *.opensdf
+*.opendb
 *.sdf
 *.suo
 *.exe

@@ -3,8 +3,8 @@
 Skynet is a lightweight online game framework, and it can be used in many other fields.
 
 ## 前言
-#### 本仓库skynet支持windows下运行，只支持visual studio 2013，请确认你的编译器已经打好SP4补丁
-#### 因为很重要，所以强调一遍，请给你的vs2013打上SP4补丁，否则会编译出错。
+#### 本仓库skynet支持windows下运行，支持vs2013 sp4/vs2015
+#### 因为很重要，所以强调一遍，如果使用vs2013，务必打上SP4补丁，否则会编译出错。
 
 ```
 此版本修改自官方版skynet，改动部分如下：
@@ -46,7 +46,7 @@ You can use vs ide to debugging skynet
 4.hack read fd(0) for console input
 ```
 
-For linux, install autoconf first for jemalloc:
+For linux, install autoconf first for jemalloc
 
 ```
 git clone https://github.com/cloudwu/skynet.git
